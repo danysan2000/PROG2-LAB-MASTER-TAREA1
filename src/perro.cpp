@@ -1,10 +1,28 @@
 #include "../include/perro.h"
 
+/*
+Esta estructura debe contener un identificador
+de tipo entero,
+ un nombre de tipo texto,
+ una edad de tipo natural (nat),
+ un indicador de vitalidad de tipo natural,
+ una descripción de tipo texto
+ una fecha de ingreso de tipo TFecha.
+ Para el nombre utilizaremos un arreglo de caracteres (char) de tamaño MAX_NOMBRE y
+ para la descripción utilizaremos un arreglo de caracteres (char) de tamaño MAX_DESCRIPCION.
+
+*/
+
+
+
 struct rep_perro {
     /************ Parte 4.1 ************/
-    /*Escriba el código a continuación */
+    int     id;
+    char    nombre[MAX_NOMBRE];
+    nat     id_vital;
+    char    descr[MAX_DESCRIPCION];
+    TFecha  fecha_ing;
 
-    /****** Fin de parte Parte 4.1 *****/
 };
 
 TPerro crearTPerro(int id, const char nombre[MAX_NOMBRE], nat edad, nat vitalidad, const char descripcion[MAX_DESCRIPCION], TFecha fechaIngreso) {

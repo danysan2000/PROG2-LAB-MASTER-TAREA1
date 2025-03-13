@@ -206,4 +206,8 @@ $(LIB):	$(ODIR)/utils.o $(ODIR)/$(PRINCIPAL).o
 	ar -qc $@ $^	
 
 
+# ----------- pruebas danysan ----------
+
+pepe:
+	echo "probando pepe"
 
