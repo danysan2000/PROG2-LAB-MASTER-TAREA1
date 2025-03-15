@@ -35,5 +35,10 @@ void aumentarTFecha(TFecha &f, nat d);
 // En caso de ser iguales retorna 0. 
 int compararTFechas(TFecha f1, TFecha f2);
 
+// Agrego metodos.
+nat diaTFecha(TFecha f);
+nat mesTFecha(TFecha f);
+nat anioTFecha(TFecha f);
+
 
 #endif  // _FECHA_H_

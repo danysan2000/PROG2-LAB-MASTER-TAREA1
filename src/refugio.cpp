@@ -2,8 +2,8 @@
 
 struct rep_refugio {
     /************ Parte 5.1 ************/
-    /*Escriba el código a continuación */
-
+    TPerro perro[MAX_PERROS];
+    int tope;
     /****** Fin de parte Parte 5.1 *****/
 };
 
@@ -42,8 +42,5 @@ void imprimirPerrosFechaTRefugio(TRefugio refugio, TFecha fecha) {
 void removerDeTRefugio(TRefugio& refugio, int id) {
     
 }
-
-
-
 
 
