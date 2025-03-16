@@ -1,5 +1,9 @@
 #include "../include/refugio.h"
 
+
+static int buscarPosicion(TPerro  vp[], int tope_aux, TPerro p);
+static void insertarOrdenado(TPerro vp[], int *tope, TPerro p );
+
 struct rep_refugio {
     /************ Parte 5.1 ************/
     TPerro perro[MAX_PERROS];
@@ -21,64 +25,137 @@ void liberarTRefugio(TRefugio& refugio)
     int ix;
     for(ix=0; ix < refugio->tope ; ix++)
     {
-           delete refugio->perro[ix];                  
+        liberarTPerro ( refugio->perro[ix] );                  
     }        
     delete refugio;
 }
 
 void agregarEnTRefugio(TRefugio& refugio, TPerro perro)
 {
-    //
-
+    // primero chequeo que no exista el id para ingresar.
+    if( estaEnTRefugio( refugio, idTPerro( perro)  ) )
+        return;
+    // agrego porque no existe
+    insertarOrdenado( refugio->perro, &refugio->tope , perro );
 }
 
-void imprimirTRefugio(TRefugio refugio) {
-
+void imprimirTRefugio(TRefugio refugio)
+{
+    int ix;
+    int tope = refugio->tope;
+    for(ix=0; ix < tope ; ix++)
+       imprimirTPerro( refugio->perro[ix]); 
 }
 
-bool estaEnTRefugio(TRefugio refugio, int id) {
-    return false;
+static int indice_perro = 0;
+
+bool estaEnTRefugio(TRefugio refugio, int id)
+{
+    // busqueda sequencial porque el vector perros esta ordenado por fecha.
+    int ix; // variable auxiliar para loops.
+    int tope = refugio->tope;
+    
+    ix=0;
+    while( ix < tope &&  idTPerro( refugio->perro[ix++]) != id );
+    if( ix < tope )
+    {
+        indice_perro = ix; // indice me sirve para saber cual es el indice en el vector
+        return true;
+    }
+    else
+        return false;
 }
 
-TPerro obtenerDeTRefugio(TRefugio refugio, int id) {
-    return NULL;
+TPerro obtenerDeTRefugio(TRefugio refugio, int id)
+{
+    TPerro perro_aux = NULL;
+    
+    if( estaEnTRefugio(refugio, id) )
+        perro_aux = refugio->perro[indice_perro];
+    return perro_aux;
 }
 
 bool ingresaronPerrosFechaTRefugio(TRefugio refugio, TFecha fecha) 
 {
+    // tengo que hacer la busqueda por fecha y ir al primer indice 
+    //
+    
+    int inicio = 0;
+    int fin = refugio->tope - 1;
+    int comp_aux;
+    int medio;
+
+    while (inicio <= fin)
+    {
+        medio = inicio + (fin - inicio) / 2;
+        comp_aux = compararTFechas( fechaIngresoTPerro( refugio->perro[medio] )  , fecha );
+        if ( comp_aux == 0 )
+        {
+           // TENGO QUE PONERLO A LO ULTIMO DE LOS REPETIDOS
+            while(  compararTFechas(fechaIngresoTPerro( refugio->perro[--medio]) , fecha ) == 0) ;  // voy por el primero en la lista de repetidos.
+            indice_perro = medio;
+            return true;  // El valor ya existe, lo inserto al final de los repetidos.
+        }
+        else if ( comp_aux == -1 ) 
+        {
+            inicio = medio + 1;
+        }
+        else
+        {
+            fin = medio - 1;
+        }
+    }
     return false;
+/*
+    if ( inicio > fin ) // no hay nada con esa fecha.
+        return false ;               
+    else
+        return inicio;  // Posición donde se debe insertar el nuevo valor
+*/ 
 }
+
 
 void imprimirPerrosFechaTRefugio(TRefugio refugio, TFecha fecha) 
 {
-
+       
+    if ( ! ingresaronPerrosFechaTRefugio( refugio, fecha) )
+        return;
+    while(fechaIngresoTPerro ( refugio->perro[indice_perro] ) ==  fecha )
+        imprimirTPerro( refugio->perro[indice_perro++] );
 }
 
 void removerDeTRefugio(TRefugio& refugio, int id) 
 {
-    
+    if( ! estaEnTRefugio(refugio, id) )
+        return;
 }
 
 //----------------------------------------------------------
 // Funciones auxiliares privadas dentro del Modulo Refugio
 //
 
-#define MAX_SIZE 100  // Tamaño máximo del vector
+// #define MAX_SIZE 100  // Tamaño máximo del vector
 
-static int buscarPosicion(int vector[], int n, int valor)
+static int buscarPosicion(TPerro  vec_perro[], int tope_aux, TPerro perro  )
 {
+    // el orden es por fecha de ingreso.
     int inicio = 0;
-    int fin = n - 1;
+    int fin = tope_aux - 1;
+    int comp_aux;
+    int medio;
 
+// TFecha fechaIngresoTPerro(TPerro perro)
     while (inicio <= fin)
     {
-        int medio = inicio + (fin - inicio) / 2;
-
-        if (vector[medio] == valor)
+        medio = inicio + (fin - inicio) / 2;
+        comp_aux = compararTFechas( fechaIngresoTPerro(vec_perro[medio]) , fechaIngresoTPerro(perro) );
+        if ( comp_aux == 0 )
         {
-            return medio;  // El valor ya existe, lo insertamos aquí
+           // TENGO QUE PONERLO A LO ULTIMO DE LOS REPETIDOS
+            while(  compararTFechas(fechaIngresoTPerro(vec_perro[++medio]) , fechaIngresoTPerro( perro) ) == 0) ;  // voy por el ultimo lugar de los repetidos.
+            return medio;  // El valor ya existe, lo inserto al final de los repetidos.
         }
-        else if (vector[medio] < valor)
+        else if ( comp_aux == -1 ) 
         {
             inicio = medio + 1;
         }
@@ -90,48 +167,24 @@ static int buscarPosicion(int vector[], int n, int valor)
     return inicio;  // Posición donde se debe insertar el nuevo valor
 }
 
-static void insertarOrdenado(int vector[], int *n, int valor)
+static void insertarOrdenado(TPerro vec_perro[], int *tope, TPerro perro )
 {
-    if (*n >= MAX_SIZE)
+    if (*tope >= MAX_PERROS)
     {
         printf("El vector está lleno, no se puede insertar más elementos.\n");
         return;
     }
-
     // Encontrar la posición donde insertar el valor
-    int pos = buscarPosicion(vector, *n, valor);
+    int pos = buscarPosicion(vec_perro, *tope,  perro );
 
     // Desplazar los elementos a la derecha para hacer espacio
-    for (int i = *n; i > pos; i--)
+    for (int i = *tope; i > pos; i--)
     {
-        vector[i] = vector[i - 1];
+        vec_perro[i] = vec_perro[i - 1];
     }
 
     // Insertar el valor en la posición correcta
-    vector[pos] = valor;
-    (*n)++;
+    vec_perro[pos] = perro ;
+    (*tope)++;
 }
-
-static int pru_main()
-{
-    int vector[MAX_SIZE];
-    int n = 0;  // Número actual de elementos en el vector
-
-    // Insertar valores en el vector
-    insertarOrdenado(vector, &n, 5);
-    insertarOrdenado(vector, &n, 3);
-    insertarOrdenado(vector, &n, 8);
-    insertarOrdenado(vector, &n, 1);
-
-    // Imprimir el vector ordenado
-    printf("Vector ordenado: ");
-    for (int i = 0; i < n; i++)
-    {
-        printf("%d ", vector[i]);
-    }
-    printf("\n");
-
-    return 0;
-}
-
 
