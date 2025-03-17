@@ -56,7 +56,7 @@ bool estaEnTRefugio(TRefugio refugio, int id)
     int tope = refugio->tope;
     
     ix=0;
-    while( ix < tope &&  idTPerro( refugio->perro[ix++]) != id );
+    while( ix < tope &&  idTPerro( refugio->perro[ix]) != id ) ix++;
     if( ix < tope )
     {
         indice_perro = ix; // indice me sirve para saber cual es el indice en el vector
@@ -92,8 +92,8 @@ bool ingresaronPerrosFechaTRefugio(TRefugio refugio, TFecha fecha)
         if ( comp_aux == 0 )
         {
            // TENGO QUE PONERLO A LO ULTIMO DE LOS REPETIDOS
-            while(  compararTFechas(fechaIngresoTPerro( refugio->perro[--medio]) , fecha ) == 0) ;  // voy por el primero en la lista de repetidos.
-            indice_perro = medio;
+            while( medio > -1 &&  compararTFechas(fechaIngresoTPerro( refugio->perro[medio]) , fecha ) == 0) medio-- ;  // voy por el primero en la lista de repetidos.
+            indice_perro = ++medio;
             return true;  // El valor ya existe, lo inserto al final de los repetidos.
         }
         else if ( comp_aux == -1 ) 
@@ -120,14 +120,21 @@ void imprimirPerrosFechaTRefugio(TRefugio refugio, TFecha fecha)
        
     if ( ! ingresaronPerrosFechaTRefugio( refugio, fecha) )
         return;
-    while(fechaIngresoTPerro ( refugio->perro[indice_perro] ) ==  fecha )
+    while( (indice_perro < refugio->tope) &&  compararTFechas( fechaIngresoTPerro( refugio->perro[indice_perro] ) , fecha ) == 0 )
         imprimirTPerro( refugio->perro[indice_perro++] );
 }
 
 void removerDeTRefugio(TRefugio& refugio, int id) 
 {
-    if( ! estaEnTRefugio(refugio, id) )
-        return;
+    int ix;
+    int tope = refugio->tope - 1;
+
+    if( refugio->tope  && !estaEnTRefugio(refugio, id) )
+       return;
+    liberarTPerro ( refugio->perro[indice_perro] );                  
+    for (ix = indice_perro; ix < tope ; ix++)
+        refugio->perro[ix] = refugio->perro[ix+1]; 
+    refugio->tope--;
 }
 
 //----------------------------------------------------------
@@ -141,18 +148,21 @@ static int buscarPosicion(TPerro  vec_perro[], int tope_aux, TPerro perro  )
     // el orden es por fecha de ingreso.
     int inicio = 0;
     int fin = tope_aux - 1;
-    int comp_aux;
+    int comp_aux=0;
     int medio;
+    TFecha f1,f2;
 
-// TFecha fechaIngresoTPerro(TPerro perro)
     while (inicio <= fin)
     {
         medio = inicio + (fin - inicio) / 2;
-        comp_aux = compararTFechas( fechaIngresoTPerro(vec_perro[medio]) , fechaIngresoTPerro(perro) );
+        f1 = fechaIngresoTPerro(vec_perro[medio]);
+        f2 = fechaIngresoTPerro(perro); 
+        //comp_aux = compararTFechas( fechaIngresoTPerro(vec_perro[medio]) , fechaIngresoTPerro(perro) );
+        comp_aux = compararTFechas( f1, f2    );
         if ( comp_aux == 0 )
         {
            // TENGO QUE PONERLO A LO ULTIMO DE LOS REPETIDOS
-            while(  compararTFechas(fechaIngresoTPerro(vec_perro[++medio]) , fechaIngresoTPerro( perro) ) == 0) ;  // voy por el ultimo lugar de los repetidos.
+            while( medio < tope_aux &&  compararTFechas(fechaIngresoTPerro(vec_perro[medio]) , fechaIngresoTPerro( perro) ) == 0) medio++ ;  // voy por el ultimo lugar de los repetidos.
             return medio;  // El valor ya existe, lo inserto al final de los repetidos.
         }
         else if ( comp_aux == -1 ) 
