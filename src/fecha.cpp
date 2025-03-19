@@ -26,7 +26,6 @@ void liberarTFecha(TFecha &fecha)
 void imprimirTFecha(TFecha fecha) 
 {
     printf("%d/%d/%d\n",fecha->dia,fecha->mes,fecha->anio);   
-
 }
 
 TFecha copiarTFecha(TFecha fecha) 

@@ -93,7 +93,7 @@ void imprimirTPerro(TPerro perro)
 {
    // TFecha aux_fech = perro->fecha_ing;
 
-   printf( "Perro %d\nNombre: %s\nEdad: %d\nDescripcion: %s\nFecha de ingreso: %u/%u/%u\nVitalidad: %d\n", 
+   printf( "Perro %d\nNombre: %s\nEdad: %d\nDescripcion: %s\nFecha de ingreso: %d/%d/%d\nVitalidad: %d\n", 
     perro->id,
     perro->nombre,
     perro->edad,

@@ -8,7 +8,6 @@ struct rep_refugio {
     /************ Parte 5.1 ************/
     TPerro perro[MAX_PERROS];
     int tope;
-    /****** Fin de parte Parte 5.1 *****/
 };
 
 TRefugio crearTRefugio()
@@ -16,7 +15,6 @@ TRefugio crearTRefugio()
     TRefugio  refugio = new rep_refugio;
     refugio->tope = 0; // incializo a cero el tope del array Perros.
     return refugio;
-//    return NULL; 
 }
 
 void liberarTRefugio(TRefugio& refugio)
@@ -24,9 +22,7 @@ void liberarTRefugio(TRefugio& refugio)
     // para liberar refugio hay que dar de baja cada perro
     int ix;
     for(ix=0; ix < refugio->tope ; ix++)
-    {
         liberarTPerro ( refugio->perro[ix] );                  
-    }        
     delete refugio;
 }
 
@@ -91,27 +87,18 @@ bool ingresaronPerrosFechaTRefugio(TRefugio refugio, TFecha fecha)
         comp_aux = compararTFechas( fechaIngresoTPerro( refugio->perro[medio] )  , fecha );
         if ( comp_aux == 0 )
         {
-           // TENGO QUE PONERLO A LO ULTIMO DE LOS REPETIDOS
-            while( medio > -1 &&  compararTFechas(fechaIngresoTPerro( refugio->perro[medio]) , fecha ) == 0) medio-- ;  // voy por el primero en la lista de repetidos.
+         // TENGO QUE PONERLO A LO ULTIMO DE LOS REPETIDOS
+            // voy por el primero en la lista de repetidos.
+            while( medio > -1 && compararTFechas(fechaIngresoTPerro(refugio->perro[medio]) , fecha ) == 0) medio-- ;
             indice_perro = ++medio;
             return true;  // El valor ya existe, lo inserto al final de los repetidos.
         }
         else if ( comp_aux == -1 ) 
-        {
             inicio = medio + 1;
-        }
         else
-        {
             fin = medio - 1;
-        }
     }
     return false;
-/*
-    if ( inicio > fin ) // no hay nada con esa fecha.
-        return false ;               
-    else
-        return inicio;  // Posición donde se debe insertar el nuevo valor
-*/ 
 }
 
 
@@ -120,7 +107,7 @@ void imprimirPerrosFechaTRefugio(TRefugio refugio, TFecha fecha)
        
     if ( ! ingresaronPerrosFechaTRefugio( refugio, fecha) )
         return;
-    while( (indice_perro < refugio->tope) &&  compararTFechas( fechaIngresoTPerro( refugio->perro[indice_perro] ) , fecha ) == 0 )
+    while( (indice_perro < refugio->tope) && compararTFechas(fechaIngresoTPerro(refugio->perro[indice_perro] ) , fecha ) == 0 )
         imprimirTPerro( refugio->perro[indice_perro++] );
 }
 
@@ -131,7 +118,7 @@ void removerDeTRefugio(TRefugio& refugio, int id)
 
     if( refugio->tope  && !estaEnTRefugio(refugio, id) )
        return;
-    liberarTPerro ( refugio->perro[indice_perro] );                  
+    liberarTPerro( refugio->perro[indice_perro] );                  
     for (ix = indice_perro; ix < tope ; ix++)
         refugio->perro[ix] = refugio->perro[ix+1]; 
     refugio->tope--;
@@ -150,29 +137,21 @@ static int buscarPosicion(TPerro  vec_perro[], int tope_aux, TPerro perro  )
     int fin = tope_aux - 1;
     int comp_aux=0;
     int medio;
-    TFecha f1,f2;
 
     while (inicio <= fin)
     {
         medio = inicio + (fin - inicio) / 2;
-        f1 = fechaIngresoTPerro(vec_perro[medio]);
-        f2 = fechaIngresoTPerro(perro); 
-        //comp_aux = compararTFechas( fechaIngresoTPerro(vec_perro[medio]) , fechaIngresoTPerro(perro) );
-        comp_aux = compararTFechas( f1, f2    );
+        comp_aux = compararTFechas( fechaIngresoTPerro(vec_perro[medio]) , fechaIngresoTPerro(perro) );
         if ( comp_aux == 0 )
         {
            // TENGO QUE PONERLO A LO ULTIMO DE LOS REPETIDOS
-            while( medio < tope_aux &&  compararTFechas(fechaIngresoTPerro(vec_perro[medio]) , fechaIngresoTPerro( perro) ) == 0) medio++ ;  // voy por el ultimo lugar de los repetidos.
+            while( medio < tope_aux &&  compararTFechas(fechaIngresoTPerro(vec_perro[medio]) , fechaIngresoTPerro(perro) ) == 0) medio++ ;  // voy por el ultimo lugar de los repetidos.
             return medio;  // El valor ya existe, lo inserto al final de los repetidos.
         }
         else if ( comp_aux == -1 ) 
-        {
             inicio = medio + 1;
-        }
         else
-        {
             fin = medio - 1;
-        }
     }
     return inicio;  // Posición donde se debe insertar el nuevo valor
 }
@@ -189,9 +168,7 @@ static void insertarOrdenado(TPerro vec_perro[], int *tope, TPerro perro )
 
     // Desplazar los elementos a la derecha para hacer espacio
     for (int i = *tope; i > pos; i--)
-    {
         vec_perro[i] = vec_perro[i - 1];
-    }
 
     // Insertar el valor en la posición correcta
     vec_perro[pos] = perro ;
