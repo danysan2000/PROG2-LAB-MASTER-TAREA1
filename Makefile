@@ -176,11 +176,11 @@ $(ARCHIVO_CLAVES):
 	rm -f $@
 	$(COMANDO_CLAVES) $(ENTREGAR:%=$(CPPDIR)/%.$(EXT)) > $@
 
-claves:$(ARCHIVO_CLAVES)
+claves: $(ARCHIVO_CLAVES)
 
 # Genera el entregable.
 CPPS_ENTREGA = $(ENTREGAR:%=%.$(EXT))
-entrega:claves
+entrega: claves
 	@rm -f $(ARCHIVO_ENTREGA)
 	tar zcf $(ARCHIVO_ENTREGA) $(ARCHIVO_CLAVES) -C src $(CPPS_ENTREGA)
 	@echo --        El directorio y archivo a entregar es:
@@ -206,8 +206,4 @@ $(LIB):	$(ODIR)/utils.o $(ODIR)/$(PRINCIPAL).o
 	ar -qc $@ $^	
 
 
-# ----------- pruebas danysan ----------
-
-pepe:
-	echo "probando pepe"
 
