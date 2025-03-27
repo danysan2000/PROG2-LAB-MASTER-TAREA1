@@ -1,0 +1,6 @@
+[submodule "tarea1"]
+	path = tarea1
+	url = ./tarea1
+[submodule "REENTREGA"]
+	path = REENTREGA
+	url = ./REENTREGA
